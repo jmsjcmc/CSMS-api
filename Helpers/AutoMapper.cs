@@ -17,6 +17,17 @@ namespace Csms_api.Helpers
                 .ForMember(d => d.Created_on, o => o.Ignore())
                 .ForMember(d => d.Updated_on, o => o.Ignore());
 
+            CreateMap<PalletRequest, Pallet>();
+
+            CreateMap<Pallet, PalletResponse>();
+
+            CreateMap<ProductRequest, Product>()
+                .ForMember(d => d.Created_on, o => o.Ignore())
+                .ForMember(d => d.Updated_on, o => o.Ignore());
+
+            CreateMap<Product, ProductResponse>()
+                .ForMember(d => d.Company, o => o.MapFrom(s => s.Company));
+
             CreateMap<UserRequest, User>()
                 .ForMember(d => d.Password, o => o.Ignore())
                 .ForMember(d => d.Role, o => o.Ignore());

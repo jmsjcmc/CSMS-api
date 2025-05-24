@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Csms_api.Helpers;
 using Csms_api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -83,11 +84,32 @@ namespace Csms_api.Controllers
             try
             {
                 var company = _mapper.Map<Company>(request);
+                company.Created_on = TimeHelper.GetPhilippineTime();
                 _context.Companies.Add(company);
                 await _context.SaveChangesAsync();
 
                 var response = _mapper.Map<CompanyResponse>(company);
                 return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPatch("company")]
+
+        [HttpDelete("company/{id}")]
+        public async Task<ActionResult> deletecompany(int id)
+        {
+            try
+            {
+                var company = await _context.Companies
+                    .FindAsync(id);
+
+                _context.Companies.Remove(company);
+                await _context.SaveChangesAsync();
+
+                return Ok("Company removed permanently.");
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);

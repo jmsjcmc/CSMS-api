@@ -13,6 +13,7 @@ namespace Csms_api
         
         public DbSet<BusinessUnit> BusinessUnits { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Pallet> Pallets { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }

@@ -31,7 +31,9 @@ namespace Csms_api.Controllers
             try
             {
                 var user = await _context.Users
-                    .FindAsync(id);
+                    .Include(u => u.BusinessUnit)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Id == id);
 
                 var response = _mapper.Map<UserResponse>(user);
                 return response;
@@ -53,6 +55,7 @@ namespace Csms_api.Controllers
             {
                 var query = _context.Users
                     .AsNoTracking()
+                    .Include(u => u.BusinessUnit)
                     .OrderByDescending(u => u.Created_on)
                     .AsQueryable();
 
@@ -94,6 +97,7 @@ namespace Csms_api.Controllers
                 int id = int.Parse(idClaim.Value);
                 var user = await _context.Users
                     .AsNoTracking()
+                    .Include(u => u.BusinessUnit)
                     .FirstOrDefaultAsync(u => u.Id == id);
 
                 var userDetail = _mapper.Map<UserResponse>(user);
@@ -200,7 +204,7 @@ namespace Csms_api.Controllers
             try
             {
                 var user = await _context.Users
-                    .SingleOrDefaultAsync(u => u.Username == username);
+                    .FirstOrDefaultAsync(u => u.Username == username);
 
                 var accessToken = _authHelper.GenerateAccessToken(user);
 

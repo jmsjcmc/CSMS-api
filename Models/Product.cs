@@ -15,6 +15,10 @@
         public string Unit { get; set; }
         public Boolean Active { get; set; }
         public Boolean Removed { get; set; }
+        public int Creator_id { get; set; }
+        public DateTime Created_on { get; set; }
+        public int? Updater_id { get; set; }
+        public DateTime? Updated_on { get; set; }
         public int Company_id { get; set; }
         public Company Company { get; set; }
     }

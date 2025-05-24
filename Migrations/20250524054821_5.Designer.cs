@@ -4,6 +4,7 @@ using Csms_api;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Csms_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250524054821_5")]
+    partial class _5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,12 +146,6 @@ namespace Csms_api.Migrations
                     b.Property<int>("Company_id")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Created_on")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Creator_id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Delivery_unit")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -182,12 +179,6 @@ namespace Csms_api.Migrations
                     b.Property<string>("Uom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Updated_on")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Updater_id")
-                        .HasColumnType("int");
 
                     b.Property<string>("Variant")
                         .IsRequired()
@@ -305,11 +296,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 1,
                             BusinessUnit_id = 1,
-                            Created_on = new DateTime(2025, 5, 24, 15, 11, 51, 963, DateTimeKind.Unspecified).AddTicks(1692),
+                            Created_on = new DateTime(2025, 5, 24, 13, 48, 20, 785, DateTimeKind.Unspecified).AddTicks(8514),
                             Department = "Cisdevo",
                             First_name = "James Jecemeco",
                             Last_name = "Tabilog",
-                            Password = "$2a$11$u5O4T5JGfN8zlbfgMcKH3.Y2wPMf03tjoKQgzNvYKfRGv7V8UfgOO",
+                            Password = "$2a$11$EZDl17a2nI1MZWw3kTFSiuMDGkm0zK40kImxFSmisnIm7p4EpFgDy",
                             Position = "Software Developer",
                             Removed = false,
                             Role = "Administrator, User, Approver",
@@ -319,11 +310,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 2,
                             BusinessUnit_id = 2,
-                            Created_on = new DateTime(2025, 5, 24, 15, 11, 52, 138, DateTimeKind.Unspecified).AddTicks(8365),
+                            Created_on = new DateTime(2025, 5, 24, 13, 48, 20, 943, DateTimeKind.Unspecified).AddTicks(9192),
                             Department = "Executive",
                             First_name = "Shiela",
                             Last_name = "Hernando",
-                            Password = "$2a$11$rcNsAoHGQ2y6CyTkNxz5ZuBtHy445iwmcuQg7O5DibqQ/WUC4ZLoK",
+                            Password = "$2a$11$WwK8XJ226Hs2EuhUjKx5Nu3C.kYeiaXWJY2Te8txtvu4RalbZb/N.",
                             Position = "Senior Operations Manager",
                             Removed = false,
                             Role = "Approver",

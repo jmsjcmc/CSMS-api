@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Csms_api.Helpers;
+using Csms_api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Csms_api.Controllers
 {
-    [Route("api/")]
+    [Route("")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -15,6 +19,88 @@ namespace Csms_api.Controllers
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        [HttpGet("product/{id}")]
+        public async Task<ActionResult<ProductResponse>> getproduct(int id)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .AsNoTracking()
+                    .Include(p => p.Company)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                var response = _mapper.Map<ProductResponse>(product);
+                return response;
+
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpGet("products")]
+        public async Task<ActionResult<Paginate<ProductResponse>>> allproducts(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? searchTerm = null)
+        {
+            try
+            {
+                var query = _context.Products
+                    .AsNoTracking()
+                    .Include(p => p.Company)
+                    .OrderByDescending(p => p.Id)
+                    .AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    query = query.Where(p => p.Product_code == searchTerm || p.Product_name == searchTerm);
+                }
+
+                var totalCount = await query.CountAsync();
+
+                var products = await query
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ProjectTo<ProductResponse>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
+
+                var response = new Paginate<ProductResponse>
+                {
+                    Items = products,
+                    Total_count = totalCount,
+                    Page_number = pageNumber,
+                    Page_size = pageSize
+                };
+
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPost("product")]
+        public async Task<ActionResult<ProductResponse>> addproduct([FromBody] ProductRequest request)
+        {
+            try
+            {
+                var product = _mapper.Map<Product>(request);
+
+                product.Created_on = TimeHelper.GetPhilippineTime();
+
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+
+                var response = _mapper.Map<ProductResponse>(product);
+
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
         }
     }
 }
