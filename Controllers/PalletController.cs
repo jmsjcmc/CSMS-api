@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Csms_api.Helpers;
 using Csms_api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,6 +51,45 @@ namespace Csms_api.Controllers
             } catch (Exception e)
             {
                 return BadRequest(e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPatch("pallet/{id}")]
+        public async Task<ActionResult> removepallet(int id)
+        {
+            try
+            {
+                var pallet = await _context.Pallets
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                pallet.Removed = true;
+                pallet.Updated_on = TimeHelper.GetPhilippineTime();
+
+                _context.Pallets.Update(pallet);
+                await _context.SaveChangesAsync();
+
+                return Ok("Pallet removed.");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpDelete("pallet/{id}")]
+        public async Task<ActionResult> deletepallet(int id)
+        {
+            try
+            {
+                var pallet = await _context.Pallets
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                _context.Pallets.Remove(pallet);
+                await _context.SaveChangesAsync();
+
+                return Ok("Pallet removed permanently.");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
     }
