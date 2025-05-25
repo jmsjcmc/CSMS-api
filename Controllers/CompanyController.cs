@@ -97,6 +97,26 @@ namespace Csms_api.Controllers
         }
 
         [HttpPatch("company")]
+        public async Task<ActionResult> hidecompany(int id)
+        {
+            try
+            {
+                var company = await _context.Companies
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                company.Removed = true;
+                company.Updated_on = TimeHelper.GetPhilippineTime();
+
+                _context.Companies.Update(company);
+                await _context.SaveChangesAsync();
+
+                return Ok("Company removed.");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
 
         [HttpDelete("company/{id}")]
         public async Task<ActionResult> deletecompany(int id)
