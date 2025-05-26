@@ -21,5 +21,6 @@
         public DateTime? Updated_on { get; set; }
         public int Company_id { get; set; }
         public Company Company { get; set; }
+        public Receiving Receiving { get; set; }
     }
 }

@@ -12,9 +12,16 @@ namespace Csms_api
         }
         
         public DbSet<BusinessUnit> BusinessUnits { get; set; }
+        public DbSet<ColdStorage> ColdStorages { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<Dispatch> Dispatches { get; set; }
+        public DbSet<DispatchDetail> DispatchDetails { get; set; }
         public DbSet<Pallet> Pallets { get; set; }
+        public DbSet<PalletPosition> PalletPositions { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Receiving> Receivings { get; set; }
+        public DbSet<ReceivingDetail> ReceivingDetails { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,6 +41,41 @@ namespace Csms_api
                 d.HasOne(p => p.Company)
                 .WithMany(p => p.Product)
                 .HasForeignKey(p => p.Company_id)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<PalletPosition>(d =>
+            {
+                d.HasOne(p => p.ColdStorage)
+                .WithMany(p => p.PalletPosition)
+                .HasForeignKey(p => p.Cs_id)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Receiving>(d =>
+            {
+                d.HasOne(r => r.Document)
+                .WithOne(r => r.Receiving)
+                .HasForeignKey<Receiving>(r => r.Document_id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                d.HasOne(r => r.Product)
+                .WithOne(r => r.Receiving)
+                .HasForeignKey<Receiving>(r => r.Product_id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            });
+
+            modelBuilder.Entity<ReceivingDetail>(d =>
+            {
+                d.HasOne(r => r.Receiving)
+                .WithMany(r => r.Receiving_detail)
+                .HasForeignKey(r => r.Receiving_id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                d.HasOne(r => r.Pallet_position)
+                .WithMany(r => r.ReceivingDetails)
+                .HasForeignKey(r => r.Position_id)
                 .OnDelete(DeleteBehavior.Restrict);
             });
 

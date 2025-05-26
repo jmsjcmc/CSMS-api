@@ -4,6 +4,7 @@ using Csms_api;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Csms_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250526035620_9")]
+    partial class _9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,9 +257,6 @@ namespace Csms_api.Migrations
                     b.Property<string>("Pallet_row")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Removed")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Section")
                         .IsRequired()
@@ -588,11 +588,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 1,
                             BusinessUnit_id = 1,
-                            Created_on = new DateTime(2025, 5, 26, 14, 40, 10, 603, DateTimeKind.Unspecified).AddTicks(4191),
+                            Created_on = new DateTime(2025, 5, 26, 11, 56, 19, 421, DateTimeKind.Unspecified).AddTicks(166),
                             Department = "Cisdevo",
                             First_name = "James Jecemeco",
                             Last_name = "Tabilog",
-                            Password = "$2a$11$PpSnRW0QW7Jno/ghGeKMfOEpML7MUDYlN1hVSuG6A6rm.nnS0VVNa",
+                            Password = "$2a$11$s2qO2o2lVzKTiGC8rZavZesE6mJrnchVVJSq7e91KbFoHF8PJ2AX.",
                             Position = "Software Developer",
                             Removed = false,
                             Role = "Administrator, User, Approver",
@@ -602,11 +602,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 2,
                             BusinessUnit_id = 2,
-                            Created_on = new DateTime(2025, 5, 26, 14, 40, 10, 767, DateTimeKind.Unspecified).AddTicks(4095),
+                            Created_on = new DateTime(2025, 5, 26, 11, 56, 19, 599, DateTimeKind.Unspecified).AddTicks(2875),
                             Department = "Executive",
                             First_name = "Shiela",
                             Last_name = "Hernando",
-                            Password = "$2a$11$eqb24d9.LZaKC6DJ4lgby.abGc6xqRlOT8wMIa9l1ygau.RLXMODq",
+                            Password = "$2a$11$.hdnhwYimqY6X3hKFM6lveobxvnVgXn2VjVqotzuiqIgEMk/2HzZy",
                             Position = "Senior Operations Manager",
                             Removed = false,
                             Role = "Approver",

@@ -13,4 +13,25 @@
         public int? Updated_id { get; set; }
         public DateTime? Updated_on { get; set; }
     }
+
+    public class PalletPosition
+    {
+        public int Id { get; set; }
+        public int Cs_id { get; set; }
+        public ColdStorage ColdStorage { get; set; }
+        public string Section { get; set; }
+        public string Pallet_row { get; set; }
+        public string Pallet_column { get; set; }
+        public Boolean Hidden { get; set; }
+        public Boolean Removed { get; set; }
+        public List<ReceivingDetail> ReceivingDetails { get; set; } = new List<ReceivingDetail>();
+    }
+
+    public class ColdStorage
+    {
+        public int Id { get; set; }
+        public string Cs_number { get; set; }
+        public Boolean Active { get; set; }
+        public List<PalletPosition> PalletPosition { get; set; } = new List<PalletPosition>();
+    }
 }

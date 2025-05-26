@@ -102,5 +102,44 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
+
+        [HttpPatch("product/{id}")]
+        public async Task<ActionResult> hideproduct (int id)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                product.Removed = true;
+                product.Updated_on = TimeHelper.GetPhilippineTime();
+
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync();
+
+                return Ok("Product removed.");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpDelete("product/{id}")]
+        public async Task<ActionResult> deleteproduct (int id)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+
+                return Ok("Product removed permanently.");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
     }
 }
