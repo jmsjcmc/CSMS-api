@@ -1,5 +1,6 @@
 using Csms_api;
 using Csms_api.Helpers;
+using Csms_api.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<AuthHelper>();
+builder.Services.AddScoped<ExcelHelper>();
+builder.Services.AddScoped<UserValidator>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

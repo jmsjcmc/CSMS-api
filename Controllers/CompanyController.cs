@@ -14,11 +14,41 @@ namespace Csms_api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-
-        public CompanyController(AppDbContext context, IMapper mapper)
+        private readonly ExcelHelper _excelHelper;
+        public CompanyController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper)
         {
             _context = context;
             _mapper = mapper;
+            _excelHelper = excelHelper;
+        }
+
+        [HttpGet("companies/template")]
+        public async Task<ActionResult> template()
+        {
+            try
+            {
+                var file = _excelHelper.generatecompanytemplate();
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "CompanyTemplate.xlsx");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpGet("companies/export")]
+        public async Task<ActionResult> export()
+        {
+            try
+            {
+                var companies = await _context.Companies
+                    .ToListAsync();
+
+                var file = _excelHelper.exportcompanies(companies);
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Companies.xlsx");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
         }
 
         [HttpGet("company/{id}")]
@@ -72,6 +102,22 @@ namespace Csms_api.Controllers
                 };
 
                 return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPost("companies/import")]
+        public async Task<ActionResult> importcompanies(IFormFile file)
+        {
+            try
+            {
+                var companies = _excelHelper.importcompanies(file);
+                await _context.Companies.AddRangeAsync(companies);
+                await _context.SaveChangesAsync();
+
+                return Ok("Companies imported.");
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);

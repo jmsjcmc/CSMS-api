@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Csms_api.Helpers;
 using Csms_api.Models;
+using Csms_api.Validators;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,15 @@ namespace Csms_api.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly AuthHelper _authHelper;
+        private readonly UserValidator _userValidator;
 
-        public UserController(AppDbContext context, IConfiguration configuration, IMapper mapper, AuthHelper authHelper)
+        public UserController(AppDbContext context, IConfiguration configuration, IMapper mapper, AuthHelper authHelper, UserValidator userValidator)
         {
             _context = context;
             _configuration = configuration;
             _mapper = mapper;
             _authHelper = authHelper;
+            _userValidator = userValidator;
         }
         [HttpGet("user/{id}")]
         public async Task<ActionResult<UserResponse>> getuser(int id)
@@ -232,6 +235,8 @@ namespace Csms_api.Controllers
         {
             try
             {
+                await _userValidator.ValidateUserRequest(request);
+
                 var requestRoles = request.Roles
                     .Select(r => r.Trim())
                     .ToList();
@@ -250,7 +255,12 @@ namespace Csms_api.Controllers
 
                 await _context.SaveChangesAsync();
 
-                var response = _mapper.Map<UserResponse>(user);
+                var savedUser = await _context.Users
+                    .Include(u => u.BusinessUnit)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+                var response = _mapper.Map<UserResponse>(savedUser);
                 return response;
             } catch (Exception e)
             {
