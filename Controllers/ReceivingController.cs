@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Csms_api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,12 +29,29 @@ namespace Csms_api.Controllers
             {
                 var query = _context.Receivings
                     .AsNoTracking()
+                    .Include(r => r.Document)
+                    .Include(r => r.Product)
+                    .Include(r => r.Receiving_detail)
                     .OrderByDescending(r => r.Created_on)
                     .AsQueryable();
 
                 var totalCount = await query.CountAsync();
 
+                var receivings = await query
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ProjectTo<ReceivingResponse>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
 
+                var response = new Paginate<ReceivingResponse>
+                {
+                    Items = receivings,
+                    Total_count = totalCount,
+                    Page_number = pageNumber,
+                    Page_size = pageSize
+                };
+
+                return response;
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);

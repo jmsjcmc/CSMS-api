@@ -9,10 +9,12 @@ namespace Csms_api.Helpers
     public class AuthHelper
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public AuthHelper(IConfiguration configuration)
+        public AuthHelper(IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _configuration = configuration;
+            _contextAccessor = contextAccessor;
         }
 
         public string GenerateAccessToken(User user)
@@ -40,6 +42,12 @@ namespace Csms_api.Helpers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public int GetUserID()
+        {
+            var userIdClaim = _contextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+            return userIdClaim != null ? int.Parse(userIdClaim.Value) : throw new UnauthorizedAccessException();
         }
     }
 }
