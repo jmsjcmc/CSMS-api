@@ -9,6 +9,8 @@ namespace Csms_api.Helpers
     {
         private readonly AuthHelper _authHelper;
         private readonly AppDbContext _context;
+        private readonly XLWorkbook _workBook;
+        private readonly MemoryStream _stream;
         private readonly string[] companyHeaders =
         {
              "First Name", "Last Name", "Position", "Email", "Phone",
@@ -30,12 +32,14 @@ namespace Csms_api.Helpers
         {
             _authHelper = authHelper;
             _context = context;
+            _workBook = new XLWorkbook();
+            _stream = new MemoryStream();
         }
 
         public byte[] generatecompanytemplate()
         {
-            var workBook = new XLWorkbook();
-            var workSheet = workBook.Worksheets.Add("Company Template");
+            var workSheet = CreateWorkSheet("Company Template");
+            var row = 2;
 
             for (int i = 0; i < companyHeaders.Length; i++)
             {
@@ -44,26 +48,24 @@ namespace Csms_api.Helpers
                 workSheet.Column(i + 1).AdjustToContents();
             }
 
-            var example = 2;
-            workSheet.Cell(example, 1).Value = "Juan";
-            workSheet.Cell(example, 2).Value = "Dela Cruz";
-            workSheet.Cell(example, 3).Value = "Sales Person";
-            workSheet.Cell(example, 4).Value = "delacruzjuan@gmail.com";
-            workSheet.Cell(example, 5).Value = "09123456789";
-            workSheet.Cell(example, 6).Value = "Bounty Fresh";
-            workSheet.Cell(example, 7).Value = "2GRG+574, Talomo, Davao City, Davao del Sur";
-            workSheet.Cell(example, 8).Value = "bountyfresh@magnolia.ph";
-            workSheet.Cell(example, 9).Value = "211587";
+            workSheet.Cell(row, 1).Value = "Juan";
+            workSheet.Cell(row, 2).Value = "Dela Cruz";
+            workSheet.Cell(row, 3).Value = "Sales Person";
+            workSheet.Cell(row, 4).Value = "delacruzjuan@gmail.com";
+            workSheet.Cell(row, 5).Value = "09123456789";
+            workSheet.Cell(row, 6).Value = "Bounty Fresh";
+            workSheet.Cell(row, 7).Value = "2GRG+574, Talomo, Davao City, Davao del Sur";
+            workSheet.Cell(row, 8).Value = "bountyfresh@magnolia.ph";
+            workSheet.Cell(row, 9).Value = "211587";
 
-            var stream = new MemoryStream();
-            workBook.SaveAs(stream);
-            return stream.ToArray();
+            Save();
+            return GetBytes();
         }
 
         public byte[] generatepallettemplate()
         {
-            var workBook = new XLWorkbook();
-            var workSheet = workBook.Worksheets.Add("Pallet Template");
+            var workSheet = CreateWorkSheet("Pallet Template");
+            var row = 2;
 
             for (int i = 0; i < palletHeaders.Length; i++)
             {
@@ -72,19 +74,18 @@ namespace Csms_api.Helpers
                 workSheet.Column(i + 1).AdjustToContents();
             }
 
-            var example = 2;
-            workSheet.Cell(example, 1).Value = "Wood";
-            workSheet.Cell(example, 2).Value = "00000001";
+           
+            workSheet.Cell(row, 1).Value = "Wood";
+            workSheet.Cell(row, 2).Value = "00000001";
 
-            var stream = new MemoryStream();
-            workBook.SaveAs(stream);
-            return stream.ToArray();
+            Save();
+            return GetBytes();
         }
 
         public byte[] generateproducttemplate()
         {
-            var workBook = new XLWorkbook();
-            var workSheet = workBook.Worksheets.Add("Product Template");
+            var workSheet = CreateWorkSheet("Product Template");
+            var row = 2;
 
             for (int i = 0; i < productHeaders.Length; i++)
             {
@@ -93,28 +94,26 @@ namespace Csms_api.Helpers
                 workSheet.Column(i + 1).AdjustToContents();
             }
 
-            var example = 2;
-            workSheet.Cell(example, 1).Value = "000-000-0001";
-            workSheet.Cell(example, 2).Value = "Frozen Chicken Tocino";
-            workSheet.Cell(example, 3).Value = "Teriyaki";
-            workSheet.Cell(example, 4).Value = "250g";
-            workSheet.Cell(example, 5).Value = "Can";
-            workSheet.Cell(example, 6).Value = "Box";
-            workSheet.Cell(example, 7).Value = "60";
-            workSheet.Cell(example, 8).Value = "Can";
-            workSheet.Cell(example, 9).Value = 100.52;
-            workSheet.Cell(example, 10).Value = "Kg";
-            workSheet.Cell(example, 11).Value = "Bounty Fresh";
+            workSheet.Cell(row, 1).Value = "000-000-0001";
+            workSheet.Cell(row, 2).Value = "Frozen Chicken Tocino";
+            workSheet.Cell(row, 3).Value = "Teriyaki";
+            workSheet.Cell(row, 4).Value = "250g";
+            workSheet.Cell(row, 5).Value = "Can";
+            workSheet.Cell(row, 6).Value = "Box";
+            workSheet.Cell(row, 7).Value = "60";
+            workSheet.Cell(row, 8).Value = "Can";
+            workSheet.Cell(row, 9).Value = 100.52;
+            workSheet.Cell(row, 10).Value = "Kg";
+            workSheet.Cell(row, 11).Value = "Bounty Fresh";
 
-            var stream = new MemoryStream();
-            workBook.SaveAs(stream);
-            return stream.ToArray();
+            Save();
+            return GetBytes();
         }
 
         public byte[] exportcompanies(IEnumerable<Company> companies)
         {
-            var workBook = new XLWorkbook();
-            var workSheet = workBook.Worksheets.Add("Companies");
+            var workSheet = CreateWorkSheet("Companies");
+            int row = 2;
 
             for (int i = 0; i < companyHeaders.Length; i++)
             {
@@ -122,31 +121,28 @@ namespace Csms_api.Helpers
                 workSheet.Cell(1, i + 1).Style.Font.Bold = true;
             }
 
-            int row = 2;
             foreach (var company in companies)
             {
-                workSheet.Cell(row, 1).Value = company.First_name;
-                workSheet.Cell(row, 2).Value = company.Last_name;
-                workSheet.Cell(row, 3).Value = company.Position;
-                workSheet.Cell(row, 4).Value = company.Email;
-                workSheet.Cell(row, 5).Value = company.Phone;
-                workSheet.Cell(row, 6).Value = company.Company_name;
-                workSheet.Cell(row, 7).Value = company.Company_address;
-                workSheet.Cell(row, 8).Value = company.Company_email;
-                workSheet.Cell(row, 9).Value = company.Company_number;
+                var values = new object[]
+                {
+                    company.First_name, company.Last_name, company.Position,
+                    company.Email, company.Phone, company.Company_name,
+                    company.Company_address, company.Company_email, company.Company_number
+                };
+                for (int col = 0; col < values.Length; col++)
+                    workSheet.Cell(row, col + 1).Value = values[col]?.ToString();
                 row++;
             }
 
             workSheet.Columns().AdjustToContents();
-            var stream = new MemoryStream();
-            workBook.SaveAs(stream);
-            return stream.ToArray();
+            Save();
+            return GetBytes();
         }
 
         public byte[] exportpallets(IEnumerable<Pallet> pallets)
         {
-            var workBook = new XLWorkbook();
-            var workSheet = workBook.Worksheets.Add("Pallets");
+            var workSheet = CreateWorkSheet("Pallets");
+            int row = 2;
 
             for (int i = 0; i < palletHeaders.Length; i++)
             {
@@ -154,24 +150,29 @@ namespace Csms_api.Helpers
                 workSheet.Cell(1, i + 1).Style.Font.Bold = true;
             }
 
-            int row = 2;
             foreach (var pallet in pallets)
             {
-                workSheet.Cell(row, 1).Value = pallet.Pallet_type;
-                workSheet.Cell(row, 2).Value = pallet.Pallet_no;
+                var values = new object[]
+                {
+                   pallet.Pallet_type, pallet.Pallet_no
+                };
+
+                for (int col = 0; col < values.Length; col++)
+                    workSheet.Cell(row, col + 1).Value = values[col]?.ToString();
                 row++;
             }
 
             workSheet.Columns().AdjustToContents();
-            var stream = new MemoryStream();
-            workBook.SaveAs(stream);
-            return stream.ToArray();
+            Save();
+            return GetBytes();
         }
 
-        public byte[] exportproducts(IEnumerable<Product> products)
+        public async Task<byte[]> exportproducts(IEnumerable<Product> products)
         {
-            var workBook = new XLWorkbook();
-            var workSheet = workBook.Worksheets.Add("Products");
+            var productList = products.ToList();
+            var companyMap = await GetCompanyMap(productList.Select(p => p.Company_id));
+            var workSheet = CreateWorkSheet("Products");
+            int row = 2;
 
             for (int i = 0; i < productHeaders.Length; i++)
             {
@@ -179,26 +180,29 @@ namespace Csms_api.Helpers
                 workSheet.Cell(1, i + 1).Style.Font.Bold = true;
             }
 
-            int row = 2;
-            foreach (var product in products)
+            foreach ( var product in productList)
             {
-                workSheet.Cell(row, 1).Value = product.Product_code;
-                workSheet.Cell(row, 2).Value = product.Product_name;
-                workSheet.Cell(row, 3).Value = product.Variant;
-                workSheet.Cell(row, 4).Value = product.Sku;
-                workSheet.Cell(row, 5).Value = product.Product_packaging;
-                workSheet.Cell(row, 6).Value = product.Delivery_unit;
-                workSheet.Cell(row, 7).Value = product.Quantity;
-                workSheet.Cell(row, 8).Value = product.Uom;
-                workSheet.Cell(row, 9).Value = product.Weight;
-                workSheet.Cell(row, 10).Value = product.Unit;
+                string companyName = companyMap.TryGetValue(product.Company_id, out var name)
+                     ? name
+                     : "Unknown";
 
+                var values = new object[]
+                {
+                    product.Product_code, product.Product_name,
+                    product.Variant, product.Sku,
+                    product.Product_packaging, product.Delivery_unit,
+                    product.Quantity, product.Uom,
+                    product.Weight, product.Unit,
+                    companyName
+                };
+
+                for (int col = 0; col < values.Length; col++)
+                    workSheet.Cell(row, col + 1).Value = values[col]?.ToString();
+                row++;
             }
-
             workSheet.Columns().AdjustToContents();
-            var stream = new MemoryStream();
-            workBook.SaveAs(stream);
-            return stream.ToArray();
+            Save();
+            return GetBytes();
         }
 
         public List<Company> importcompanies (IFormFile file)
@@ -298,12 +302,44 @@ namespace Csms_api.Helpers
             return products;
         }
 
+        public IXLWorksheet CreateWorkSheet(string sheetName)
+        {
+            return _workBook.Worksheets.Add(sheetName);
+        }
+
+        public void Save()
+        {
+            _workBook.SaveAs(_stream);
+        }
+
+        public byte[] GetBytes()
+        {
+            return _stream.ToArray();
+        }
+
+        public void Dispose()
+        {
+            _workBook.Dispose();
+            _stream.Dispose();
+        }
+
         public async Task<int> GetCompanyId(string companyName)
         {
             return await _context.Companies
                 .Where(c => c.Company_name == companyName)
                 .Select(c => c.Id)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<Dictionary<int, string>> GetCompanyMap(IEnumerable<int> companyIds)
+        {
+            var ids = companyIds
+               .Distinct()
+               .ToList();
+
+            return await _context.Companies
+                .Where(c => ids.Contains(c.Id))
+                .ToDictionaryAsync(c => c.Id, c => c.Company_name);
         }
     }
 }

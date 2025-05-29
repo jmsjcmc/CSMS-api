@@ -14,12 +14,43 @@ namespace Csms_api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ExcelHelper _excelHelper;
 
-        public PalletController(AppDbContext context, IMapper mapper)
+        public PalletController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper)
         {
             _context = context;
             _mapper = mapper;
+            _excelHelper = excelHelper;
         }
+        [HttpGet("pallets/template")]
+        public async Task<ActionResult> template()
+        {
+            try
+            {
+                var file = _excelHelper.generatepallettemplate();
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "PalletTemplate.xlsx");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpGet("pallets/export")]
+        public async Task<ActionResult> export()
+        {
+            try
+            {
+                var pallets = await _context.Pallets
+                    .ToListAsync();
+
+                var file = _excelHelper.exportpallets(pallets);
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Pallets.xlsx");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
         [HttpGet("cold-storage/{id}")]
         public async Task<ActionResult<ColdStorageResponse>> getstorage(int id)
         {
@@ -141,6 +172,22 @@ namespace Csms_api.Controllers
 
                 var response = _mapper.Map<List<PositionResponse>>(positions);
                 return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPost("pallets/import")]
+        public async Task<ActionResult> importpallets(IFormFile file)
+        {
+            try
+            {
+                var pallets = _excelHelper.importpallets(file);
+                await _context.Pallets.AddRangeAsync(pallets);
+                await _context.SaveChangesAsync();
+
+                return Ok("Pallets imported.");
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);

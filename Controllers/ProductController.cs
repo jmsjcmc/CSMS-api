@@ -14,11 +14,41 @@ namespace Csms_api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ExcelHelper _excelHelper;
 
-        public ProductController(AppDbContext context, IMapper mapper)
+        public ProductController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper)
         {
             _context = context;
             _mapper = mapper;
+            _excelHelper = excelHelper;
+        }
+
+        [HttpGet("products/template")]
+        public async Task<ActionResult> template()
+        {
+            try
+            {
+                var file = _excelHelper.generateproducttemplate();
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ProductTemplate.xlsx");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpGet("products/export")]
+        public async Task<ActionResult> export()
+        {
+            try
+            {
+                var products = await _context.Products
+                    .ToListAsync();
+                var file = await _excelHelper.exportproducts(products);
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Products.xlsx");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
         }
 
         [HttpGet("product/{id}")]
@@ -76,6 +106,22 @@ namespace Csms_api.Controllers
                 };
 
                 return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPost("products/import")]
+        public async Task<ActionResult> importproducts(IFormFile file)
+        {
+            try
+            {
+                var products = await _excelHelper.importproducts(file);
+                await _context.Products.AddRangeAsync(products);
+                await _context.SaveChangesAsync();
+
+                return Ok("Products imported.");
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);

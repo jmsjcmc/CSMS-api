@@ -3,7 +3,6 @@ using AutoMapper.QueryableExtensions;
 using Csms_api.Helpers;
 using Csms_api.Models;
 using Csms_api.Validators;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;

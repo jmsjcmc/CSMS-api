@@ -20,6 +20,23 @@ namespace Csms_api.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("receiving/{id}")]
+        public async Task<ActionResult<ReceivingResponse>> getreceiving(int id)
+        {
+            try
+            {
+                var receiving = await _context.Receivings
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(r => r.Id == id);
+
+                var response = _mapper.Map<ReceivingResponse>(receiving);
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
         [HttpGet("receivings")]
         public async Task<ActionResult<Paginate<ReceivingResponse>>> allreceiving(
             [FromQuery] int pageNumber = 1,
