@@ -10,7 +10,6 @@ namespace Csms_api
         {
 
         }
-        
         public DbSet<BusinessUnit> BusinessUnits { get; set; }
         public DbSet<ColdStorage> ColdStorages { get; set; }
         public DbSet<Company> Companies { get; set; }
@@ -27,6 +26,36 @@ namespace Csms_api
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Dispatch>(d =>
+            {
+                d.HasOne(d => d.Product)
+                .WithOne(d => d.Dispatch)
+                .HasForeignKey<Dispatch>(d => d.Product_id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                d.HasOne(d => d.Document)
+                .WithOne(d => d.Dispatch)
+                .HasForeignKey<Dispatch>(d => d.Document_id)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<DispatchDetail>(d =>
+            {
+                d.HasOne(d => d.Dispatch)
+                .WithMany(d => d.Details)
+                .HasForeignKey(d => d.Dispatching_id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                d.HasOne(d => d.Receiving_detail)
+                .WithOne(d => d.Dispatch_detail)
+                .HasForeignKey<DispatchDetail>(d => d.ReceivingDetail_id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                d.HasOne(d => d.Position)
+                .WithMany(d => d.DispatchDetail)
+                .HasForeignKey(d => d.Position_id)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
 
             modelBuilder.Entity<User>(d =>
             {

@@ -24,6 +24,7 @@
         public string Pallet_column { get; set; }
         public Boolean Hidden { get; set; }
         public Boolean Removed { get; set; }
+        public List<DispatchDetail> DispatchDetail { get; set; } = new List<DispatchDetail>();
         public List<ReceivingDetail> ReceivingDetails { get; set; } = new List<ReceivingDetail>();
     }
 

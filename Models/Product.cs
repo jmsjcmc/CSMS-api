@@ -22,5 +22,6 @@
         public int Company_id { get; set; }
         public Company Company { get; set; }
         public Receiving Receiving { get; set; }
+        public Dispatch Dispatch { get; set; }
     }
 }

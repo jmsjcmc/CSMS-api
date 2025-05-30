@@ -46,6 +46,7 @@
         public double Total_weight { get; set; }
         public Boolean Received { get; set; }
         public Boolean Dispatched { get; set; }
+        public DispatchDetail Dispatch_detail { get; set; }
 
     }
 
@@ -54,6 +55,7 @@
         public int Id { get; set; }
         public string Document_number { get; set; }
         public Receiving Receiving { get; set; }
+        public Dispatch Dispatch { get; set; }
 
     }
 }

@@ -37,6 +37,41 @@ namespace Csms_api.Controllers
             }
         }
 
+        [HttpGet("receiving/product-code")]
+        public async Task<ActionResult<ProductCodeResponse>> getproductcode()
+        {
+            try
+            {
+                var products = await _context.Products
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var response = _mapper.Map<ProductCodeResponse>(products);
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpGet("receiving/product")]
+        public async Task<ActionResult<ProductResponse>> getproductforreceiving(
+            [FromQuery]string? productCode = null)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(p => p.Product_code == productCode);
+
+                var response = _mapper.Map<ProductResponse>(product);
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
         [HttpGet("receivings")]
         public async Task<ActionResult<Paginate<ReceivingResponse>>> allreceiving(
             [FromQuery] int pageNumber = 1,
@@ -49,6 +84,7 @@ namespace Csms_api.Controllers
                     .Include(r => r.Document)
                     .Include(r => r.Product)
                     .Include(r => r.Receiving_detail)
+                    .Where(r => !r.Removed)
                     .OrderByDescending(r => r.Created_on)
                     .AsQueryable();
 

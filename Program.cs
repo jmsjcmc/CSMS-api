@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<AuthHelper>();
 builder.Services.AddScoped<ExcelHelper>();
 builder.Services.AddScoped<UserValidator>();
+builder.Services.AddScoped<RoleValidator>();
+builder.Services.AddScoped<BusinessUnitValidator>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

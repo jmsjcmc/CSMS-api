@@ -14,18 +14,20 @@ namespace Csms_api.Controllers
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly AuthHelper _authHelper;
         private readonly UserValidator _userValidator;
+        private readonly RoleValidator _roleValidator;
+        private readonly BusinessUnitValidator _businessUnitValidator;
 
-        public UserController(AppDbContext context, IConfiguration configuration, IMapper mapper, AuthHelper authHelper, UserValidator userValidator)
+        public UserController(AppDbContext context, IMapper mapper, AuthHelper authHelper, UserValidator userValidator, RoleValidator roleValidator, BusinessUnitValidator businessUnitValidator)
         {
             _context = context;
-            _configuration = configuration;
             _mapper = mapper;
             _authHelper = authHelper;
             _userValidator = userValidator;
+            _roleValidator = roleValidator;
+            _businessUnitValidator = businessUnitValidator;
         }
         [HttpGet("user/{id}")]
         public async Task<ActionResult<UserResponse>> getuser(int id)
@@ -57,6 +59,7 @@ namespace Csms_api.Controllers
             {
                 var query = _context.Users
                     .AsNoTracking()
+                    .Where(u => !u.Removed)
                     .Include(u => u.BusinessUnit)
                     .OrderByDescending(u => u.Created_on)
                     .AsQueryable();
@@ -137,6 +140,7 @@ namespace Csms_api.Controllers
             {
                 var query = _context.BusinessUnits
                     .AsNoTracking()
+                    .Where(b => !b.Removed)
                     .OrderByDescending(b => b.Business_unit)
                     .AsQueryable();
                 if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -191,6 +195,7 @@ namespace Csms_api.Controllers
             {
                 var roles = await _context.Roles
                     .AsNoTracking()
+                    .Where(r => !r.Removed)
                     .ToListAsync();
 
                 return roles;
@@ -205,6 +210,7 @@ namespace Csms_api.Controllers
         {
             try
             {
+                await _userValidator.ValidateUserLogin(username, password);
                 var user = await _context.Users
                     .FirstOrDefaultAsync(u => u.Username == username);
 
@@ -310,6 +316,7 @@ namespace Csms_api.Controllers
         {
             try
             {
+                await _roleValidator.ValidateRoleRequest(roleName);
                 var role = new Role
                 {
                     Role_name = roleName
@@ -369,6 +376,7 @@ namespace Csms_api.Controllers
         {
             try
             {
+                await _businessUnitValidator.ValidateBusinessUnitRequest(request);
                 var businessUnit = _mapper.Map<BusinessUnit>(request);
                 _context.BusinessUnits.Add(businessUnit);
 

@@ -29,4 +29,12 @@
         public string Unit { get; set; }
         public CompanyResponse Company { get; set; }
     }
+
+    public class ProductCodeResponse
+    {
+        public string Product_code { get; set; }
+        public string Product_name { get; set; }
+        public string Variant { get; set; }
+        public string Sku { get; set; }
+    }
 }

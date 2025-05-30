@@ -83,6 +83,19 @@ namespace Csms_api.Validators
             }
         }
 
+        public async Task ValidateUserLogin(string username, string password)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("Username required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("Password required.");
+            }
+        }
+
         private static bool strongPassword(string password)
         {
             // Atleast 1 uppercase, 1 lowercase, 1 digit, 1 special character

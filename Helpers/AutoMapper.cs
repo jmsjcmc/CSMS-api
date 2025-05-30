@@ -36,6 +36,8 @@ namespace Csms_api.Helpers
             CreateMap<Product, ProductResponse>()
                 .ForMember(d => d.Company, o => o.MapFrom(s => s.Company));
 
+            CreateMap<Product, ProductCodeResponse>();
+
             CreateMap<ReceivingRequest, Receiving>()
                 .ForMember(d => d.Document_id, o => o.Ignore())
                 .ForMember(d => d.Receiving_detail, o => o.MapFrom(s => s.Receiving_detail));
