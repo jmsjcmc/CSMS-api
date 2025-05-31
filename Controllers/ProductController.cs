@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Csms_api.Helpers;
 using Csms_api.Models;
+using Csms_api.Validators;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,13 @@ namespace Csms_api.Controllers
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly ExcelHelper _excelHelper;
-
-        public ProductController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper)
+        private readonly ProductValidator _productValidator;
+        public ProductController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper, ProductValidator productValidator)
         {
             _context = context;
             _mapper = mapper;
             _excelHelper = excelHelper;
+            _productValidator = productValidator;
         }
 
         [HttpGet("products/template")]
@@ -133,14 +135,22 @@ namespace Csms_api.Controllers
         {
             try
             {
+                await _productValidator.ValidateProductRequest(request);
+
                 var product = _mapper.Map<Product>(request);
 
                 product.Created_on = TimeHelper.GetPhilippineTime();
+                product.Active = true;
 
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
 
-                var response = _mapper.Map<ProductResponse>(product);
+                var savedProduct = await _context.Products
+                    .Include(p => p.Company)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(p => p.Id == product.Id);
+
+                var response = _mapper.Map<ProductResponse>(savedProduct);
 
                 return response;
             } catch (Exception e)
@@ -164,6 +174,25 @@ namespace Csms_api.Controllers
                 await _context.SaveChangesAsync();
 
                 return Ok("Product removed.");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPatch("product/toggle-active")]
+        public async Task<ActionResult> toggleactive(int id)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                product.Active = !product.Active;
+
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync();
+                return Ok($"Product with ID {id} status changed.");
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);

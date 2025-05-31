@@ -3,7 +3,7 @@
     public class Dispatch
     {
         public int Id { get; set; }
-        public string Product_id { get; set; }
+        public int Product_id { get; set; }
         public Product Product { get; set; }
         public int Document_id { get; set; }
         public Document Document { get; set; }

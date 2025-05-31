@@ -30,6 +30,7 @@ namespace Csms_api.Helpers
             CreateMap<PalletPosition, PositionResponse>();
 
             CreateMap<ProductRequest, Product>() 
+                .ForMember(d => d.Active, o => o.Ignore())
                 .ForMember(d => d.Created_on, o => o.Ignore())
                 .ForMember(d => d.Updated_on, o => o.Ignore());
 
@@ -40,10 +41,10 @@ namespace Csms_api.Helpers
 
             CreateMap<ReceivingRequest, Receiving>()
                 .ForMember(d => d.Document_id, o => o.Ignore())
+                .ForMember(d => d.Pending, o => o.Ignore())
                 .ForMember(d => d.Receiving_detail, o => o.MapFrom(s => s.Receiving_detail));
 
             CreateMap<Receiving, ReceivingResponse>();
-
 
             CreateMap<ReceivingDetailRequest, ReceivingDetail>();
 

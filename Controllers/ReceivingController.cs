@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Csms_api.Models;
-using Microsoft.AspNetCore.Http;
+using Csms_api.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +13,13 @@ namespace Csms_api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ReceivingValidator _receivingValidator;
 
-        public ReceivingController(AppDbContext context, IMapper mapper)
+        public ReceivingController(AppDbContext context, IMapper mapper, ReceivingValidator receivingValidator)
         {
             _context = context;
             _mapper = mapper;
+            _receivingValidator = receivingValidator;
         }
 
         [HttpGet("receiving/{id}")]
@@ -69,6 +71,72 @@ namespace Csms_api.Controllers
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpGet("receiving/generate-documentNo")]
+        public async Task <ActionResult<DocumentNumberResponse>> generatedocumentnumber(string? category)
+        {
+            try
+            {
+                var prefix = _receivingValidator.GetPrefixByCategory(category);
+                var documentNos = await _context.Receivings
+                    .AsNoTracking()
+                    .Include(r => r.Document)
+                    .Where(r => r.Document.Document_number.StartsWith(prefix))
+                    .Select(r => r.Document.Document_number)
+                    .ToListAsync();
+
+                var nextSequence = _receivingValidator.GetNextSequence(documentNos);
+                var generateDocNo = $"{prefix}-0000-{nextSequence:D4}";
+
+                var response = new DocumentNumberResponse
+                {
+                    Document_number = generateDocNo
+                };
+
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpGet("receivings/pending")]
+        public async Task<ActionResult<Paginate<ReceivingResponse>>> allpending(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var query = _context.Receivings
+                    .AsNoTracking()
+                    .Include(r => r.Document)
+                    .Include(r => r.Product)
+                    .Include(r => r.Receiving_detail)
+                    .Where(r => r.Pending)
+                    .OrderByDescending(r => r.Created_on)
+                    .AsQueryable();
+
+                var totalCount = await query.CountAsync();
+
+                var pendings = await query
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ProjectTo<ReceivingResponse>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
+
+                var response = new Paginate<ReceivingResponse>
+                {
+                    Items = pendings,
+                    Total_count = totalCount,
+                    Page_number = pageNumber,
+                    Page_size = pageSize
+                };
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException.Message ?? e.Message);
             }
         }
 
@@ -126,6 +194,7 @@ namespace Csms_api.Controllers
 
                 var receiving = _mapper.Map<Receiving>(request);
                 receiving.Document_id = document.Id;
+                receiving.Pending = true;
 
                 _context.Receivings.Add(receiving);
                 await _context.SaveChangesAsync();

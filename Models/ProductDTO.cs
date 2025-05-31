@@ -27,6 +27,8 @@
         public string Uom { get; set; }
         public double Weight { get; set; }
         public string Unit { get; set; }
+        public Boolean Active { get; set; }
+        public Boolean Removed { get; set; }
         public CompanyResponse Company { get; set; }
     }
 

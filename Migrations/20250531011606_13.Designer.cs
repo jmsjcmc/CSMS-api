@@ -4,6 +4,7 @@ using Csms_api;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Csms_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250531011606_13")]
+    partial class _13
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -691,11 +694,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 1,
                             BusinessUnit_id = 1,
-                            Created_on = new DateTime(2025, 5, 31, 9, 22, 32, 264, DateTimeKind.Unspecified).AddTicks(3148),
+                            Created_on = new DateTime(2025, 5, 31, 9, 16, 5, 373, DateTimeKind.Unspecified).AddTicks(7968),
                             Department = "Cisdevo",
                             First_name = "James Jecemeco",
                             Last_name = "Tabilog",
-                            Password = "$2a$11$1Jx.3RqUx6CFpuSvwuQy5eW9tXtr9sX3/OAwlNw2GnvHhSolxEKx2",
+                            Password = "$2a$11$TFpCZNTqe1A1qV5IQV0kiei.53CyotcC.QhtCvuamSbaczfRrv6g.",
                             Position = "Software Developer",
                             Removed = false,
                             Role = "Administrator, User, Approver",
@@ -705,11 +708,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 2,
                             BusinessUnit_id = 2,
-                            Created_on = new DateTime(2025, 5, 31, 9, 22, 32, 423, DateTimeKind.Unspecified).AddTicks(2171),
+                            Created_on = new DateTime(2025, 5, 31, 9, 16, 5, 532, DateTimeKind.Unspecified).AddTicks(295),
                             Department = "Executive",
                             First_name = "Shiela",
                             Last_name = "Hernando",
-                            Password = "$2a$11$MpSIGY9gEBybvPodbAYCYOOJ7.cnvGZRGOpx229GNoVeOlR1fMdNK",
+                            Password = "$2a$11$sBYb6UZjOcsH5q0r6iZpVetXdCNo7Q.fZD3cBeElwzMcenTrZ24Va",
                             Position = "Senior Operations Manager",
                             Removed = false,
                             Role = "Approver",

@@ -69,4 +69,9 @@
         public Boolean Dispatched { get; set; }
         public PositionResponse Position { get; set; }
     }
+
+    public class DocumentNumberResponse
+    {
+        public string Document_number { get; set; }
+    }
 }
