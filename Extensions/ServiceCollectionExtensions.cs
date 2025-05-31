@@ -1,4 +1,5 @@
 ﻿using Csms_api.Helpers;
+using Csms_api.Services;
 using Csms_api.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -14,13 +15,14 @@ namespace Csms_api.Extensions
             // Helpers
             service.AddScoped<AuthHelper>();
             service.AddScoped<ExcelHelper>();
-            //Validators
+            // Validators
             service.AddScoped<ProductValidator>();
             service.AddScoped<UserValidator>();
             service.AddScoped<ReceivingValidator>();
             service.AddScoped<RoleValidator>();
             service.AddScoped<BusinessUnitValidator>();
-
+            // Services
+            service.AddScoped<ReceivingService>();
             return service;
         }
 

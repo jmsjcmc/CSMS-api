@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Csms_api.Helpers;
 using Csms_api.Models;
+using Csms_api.Services;
 using Csms_api.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +16,14 @@ namespace Csms_api.Controllers
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly ReceivingValidator _receivingValidator;
+        private readonly ReceivingService _receivingService;
 
-        public ReceivingController(AppDbContext context, IMapper mapper, ReceivingValidator receivingValidator)
+        public ReceivingController(AppDbContext context, IMapper mapper, ReceivingValidator receivingValidator, ReceivingService receivingService)
         {
             _context = context;
             _mapper = mapper;
             _receivingValidator = receivingValidator;
+            _receivingService = receivingService;
         }
 
         [HttpGet("receiving/{id}")]
@@ -184,6 +188,8 @@ namespace Csms_api.Controllers
         {
             try
             {
+                await _receivingValidator.ValidateReceivingRequest(request);
+
                 var document = new Document
                 {
                     Document_number = request.Document_number
@@ -200,6 +206,35 @@ namespace Csms_api.Controllers
                 await _context.SaveChangesAsync();
 
                 var response = _mapper.Map<ReceivingResponse>(receiving);
+                return response;
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+
+        [HttpPatch("receiving/update-status")]
+        public async Task<ActionResult<ReceivingResponse>> updatestatus(int id,
+            [FromQuery] string status)
+        {
+            try
+            {
+                var receiving = await _context.Receivings
+                    .FirstOrDefaultAsync(r => r.Id == id);
+
+                _receivingService.UpdateStatus(receiving, status);
+                receiving.Updated_on = TimeHelper.GetPhilippineTime();
+                _context.Receivings.Update(receiving);
+                await _context.SaveChangesAsync();
+
+                var updatedReceiving = await _context.Receivings
+                    .Include(r => r.Document)
+                    .Include(r => r.Product)
+                    .Include(r => r.Receiving_detail)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(r => r.Id == id);
+
+                var response = _mapper.Map<ReceivingResponse>(updatedReceiving);
                 return response;
             } catch (Exception e)
             {
