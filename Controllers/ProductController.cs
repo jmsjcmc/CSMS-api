@@ -9,18 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Csms_api.Controllers
 {
-    [Route("")]
-    [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController : BaseApiController
     {
-        private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly ExcelHelper _excelHelper;
         private readonly ProductValidator _productValidator;
-        public ProductController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper, ProductValidator productValidator)
+        public ProductController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper, ProductValidator productValidator) : base (context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _excelHelper = excelHelper;
             _productValidator = productValidator;
         }

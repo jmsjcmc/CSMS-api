@@ -9,19 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Csms_api.Controllers
 {
-    [Route("")]
-    [ApiController]
-    public class ReceivingController : ControllerBase
+    public class ReceivingController : BaseApiController
     {
-        private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly ReceivingValidator _receivingValidator;
         private readonly ReceivingService _receivingService;
 
-        public ReceivingController(AppDbContext context, IMapper mapper, ReceivingValidator receivingValidator, ReceivingService receivingService)
+        public ReceivingController(AppDbContext context, IMapper mapper, ReceivingValidator receivingValidator, ReceivingService receivingService) : base (context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _receivingValidator = receivingValidator;
             _receivingService = receivingService;
         }

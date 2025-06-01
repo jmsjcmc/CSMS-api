@@ -9,21 +9,15 @@ using System.Security.Claims;
 
 namespace Csms_api.Controllers
 {
-    [Route("")]
-    [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseApiController
     {
-        private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly AuthHelper _authHelper;
         private readonly UserValidator _userValidator;
         private readonly RoleValidator _roleValidator;
         private readonly BusinessUnitValidator _businessUnitValidator;
 
-        public UserController(AppDbContext context, IMapper mapper, AuthHelper authHelper, UserValidator userValidator, RoleValidator roleValidator, BusinessUnitValidator businessUnitValidator)
+        public UserController(AppDbContext context, IMapper mapper, AuthHelper authHelper, UserValidator userValidator, RoleValidator roleValidator, BusinessUnitValidator businessUnitValidator) : base (context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _authHelper = authHelper;
             _userValidator = userValidator;
             _roleValidator = roleValidator;

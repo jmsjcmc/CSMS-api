@@ -8,18 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Csms_api.Controllers
 {
-    [Route("")]
-    [ApiController]
-    public class PalletController : ControllerBase
+    public class PalletController : BaseApiController
     {
-        private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly ExcelHelper _excelHelper;
-
-        public PalletController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper)
+        public PalletController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper) : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _excelHelper = excelHelper;
         }
         [HttpGet("pallets/template")]

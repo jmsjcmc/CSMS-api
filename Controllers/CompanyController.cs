@@ -2,23 +2,16 @@
 using AutoMapper.QueryableExtensions;
 using Csms_api.Helpers;
 using Csms_api.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Csms_api.Controllers
 {
-    [Route("")]
-    [ApiController]
-    public class CompanyController : ControllerBase
+    public class CompanyController : BaseApiController
     {
-        private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly ExcelHelper _excelHelper;
-        public CompanyController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper)
+        public CompanyController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper) : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
             _excelHelper = excelHelper;
         }
 

@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using AutoMapper;
+using Csms_api.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Csms_api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DispatchController : ControllerBase
+    public class DispatchController : BaseApiController
     {
-        private readonly AppDbContext _context;
-
-        public DispatchController(AppDbContext context)
+        public DispatchController(AppDbContext context, IMapper mapper) : base (context, mapper)
         {
-            _context = context;
         }
     }
 }
