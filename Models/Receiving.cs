@@ -39,9 +39,8 @@
         public int Id { get; set; }
         public int Receiving_id { get; set; }
         public Receiving Receiving { get; set; }
-        public int Position_id { get; set; }
-        public PalletPosition Pallet_position { get; set; }
-        public int Pallet_number { get; set; }
+        public int Pallet_id { get; set; }
+        public Pallet Pallet { get; set; }
         public int Quantity_in_pallet { get; set; }
         public double Total_weight { get; set; }
         public Boolean Received { get; set; }

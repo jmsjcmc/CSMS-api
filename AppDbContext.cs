@@ -51,9 +51,9 @@ namespace Csms_api
                 .HasForeignKey<DispatchDetail>(d => d.ReceivingDetail_id)
                 .OnDelete(DeleteBehavior.Restrict);
 
-                d.HasOne(d => d.Position)
+                d.HasOne(d => d.Pallet)
                 .WithMany(d => d.DispatchDetail)
-                .HasForeignKey(d => d.Position_id)
+                .HasForeignKey(d => d.Pallet_id)
                 .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -70,6 +70,14 @@ namespace Csms_api
                 d.HasOne(p => p.Company)
                 .WithMany(p => p.Product)
                 .HasForeignKey(p => p.Company_id)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Pallet>(d =>
+            {
+                d.HasOne(p => p.Position)
+                .WithOne(p => p.Pallet)
+                .HasForeignKey<Pallet>(p => p.Position_id)
                 .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -102,9 +110,9 @@ namespace Csms_api
                 .HasForeignKey(r => r.Receiving_id)
                 .OnDelete(DeleteBehavior.Restrict);
 
-                d.HasOne(r => r.Pallet_position)
-                .WithMany(r => r.ReceivingDetails)
-                .HasForeignKey(r => r.Position_id)
+                d.HasOne(r => r.Pallet)
+                .WithMany(r => r.ReceivingDetail)
+                .HasForeignKey(r => r.Pallet_id)
                 .OnDelete(DeleteBehavior.Restrict);
             });
 

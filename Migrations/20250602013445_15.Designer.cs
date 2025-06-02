@@ -4,6 +4,7 @@ using Csms_api;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Csms_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250602013445_15")]
+    partial class _15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,6 +258,9 @@ namespace Csms_api.Migrations
                     b.Property<int>("Pallet_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Position_id")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity_in_pallet")
                         .HasColumnType("int");
 
@@ -266,6 +272,8 @@ namespace Csms_api.Migrations
                     b.HasIndex("Dispatching_id");
 
                     b.HasIndex("Pallet_id");
+
+                    b.HasIndex("Position_id");
 
                     b.HasIndex("ReceivingDetail_id")
                         .IsUnique();
@@ -566,6 +574,9 @@ namespace Csms_api.Migrations
                     b.Property<int>("Pallet_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Position_id")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity_in_pallet")
                         .HasColumnType("int");
 
@@ -581,6 +592,8 @@ namespace Csms_api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Pallet_id");
+
+                    b.HasIndex("Position_id");
 
                     b.HasIndex("Receiving_id");
 
@@ -689,11 +702,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 1,
                             BusinessUnit_id = 1,
-                            Created_on = new DateTime(2025, 6, 2, 10, 35, 6, 954, DateTimeKind.Unspecified).AddTicks(1386),
+                            Created_on = new DateTime(2025, 6, 2, 9, 34, 44, 391, DateTimeKind.Unspecified).AddTicks(3552),
                             Department = "Cisdevo",
                             First_name = "James Jecemeco",
                             Last_name = "Tabilog",
-                            Password = "$2a$11$99vcZAlUTQ5QlY2708g68.fmChGD6i6sbQtuYUVQDapfG/EiQ4uLm",
+                            Password = "$2a$11$RALbultYp07dj6703XGnXeCSjGUzO2zkKHe.P/J53L0Khl31onGs2",
                             Position = "Software Developer",
                             Removed = false,
                             Role = "Administrator, User, Approver",
@@ -703,11 +716,11 @@ namespace Csms_api.Migrations
                         {
                             Id = 2,
                             BusinessUnit_id = 2,
-                            Created_on = new DateTime(2025, 6, 2, 10, 35, 7, 118, DateTimeKind.Unspecified).AddTicks(3489),
+                            Created_on = new DateTime(2025, 6, 2, 9, 34, 44, 549, DateTimeKind.Unspecified).AddTicks(7281),
                             Department = "Executive",
                             First_name = "Shiela",
                             Last_name = "Hernando",
-                            Password = "$2a$11$h.6vHyODuK/YpKCjGtbJ/ec3PBEa2qyowlKzakSo3TPGBaB8iJ2bO",
+                            Password = "$2a$11$./iGWzASCTVsCwzv/WjLbOldQYezl06FOfQG.zb2m2qUub9xdYhDK",
                             Position = "Senior Operations Manager",
                             Removed = false,
                             Role = "Approver",
@@ -748,6 +761,12 @@ namespace Csms_api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Csms_api.Models.PalletPosition", "Position")
+                        .WithMany("DispatchDetail")
+                        .HasForeignKey("Position_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Csms_api.Models.ReceivingDetail", "Receiving_detail")
                         .WithOne("Dispatch_detail")
                         .HasForeignKey("Csms_api.Models.DispatchDetail", "ReceivingDetail_id")
@@ -757,6 +776,8 @@ namespace Csms_api.Migrations
                     b.Navigation("Dispatch");
 
                     b.Navigation("Pallet");
+
+                    b.Navigation("Position");
 
                     b.Navigation("Receiving_detail");
                 });
@@ -821,6 +842,12 @@ namespace Csms_api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Csms_api.Models.PalletPosition", "Pallet_position")
+                        .WithMany("ReceivingDetails")
+                        .HasForeignKey("Position_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Csms_api.Models.Receiving", "Receiving")
                         .WithMany("Receiving_detail")
                         .HasForeignKey("Receiving_id")
@@ -828,6 +855,8 @@ namespace Csms_api.Migrations
                         .IsRequired();
 
                     b.Navigation("Pallet");
+
+                    b.Navigation("Pallet_position");
 
                     b.Navigation("Receiving");
                 });
@@ -881,8 +910,12 @@ namespace Csms_api.Migrations
 
             modelBuilder.Entity("Csms_api.Models.PalletPosition", b =>
                 {
+                    b.Navigation("DispatchDetail");
+
                     b.Navigation("Pallet")
                         .IsRequired();
+
+                    b.Navigation("ReceivingDetails");
                 });
 
             modelBuilder.Entity("Csms_api.Models.Product", b =>

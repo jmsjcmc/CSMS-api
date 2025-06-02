@@ -21,7 +21,12 @@ namespace Csms_api.Helpers
 
             CreateMap<ColdStorage, ColdStorageResponse>();
 
-            CreateMap<PalletRequest, Pallet>();
+            CreateMap<PalletRequest, Pallet>()
+                .ForMember(d => d.Occupied, o => o.Ignore())
+                .ForMember(d => d.Active, o => o.Ignore())
+                .ForMember(d => d.Removed, o => o.Ignore())
+                .ForMember(d => d.Created_on, o => o.Ignore())
+                .ForMember(d => d.Updated_on, o => o.Ignore());
 
             CreateMap<Pallet, PalletResponse>();
 

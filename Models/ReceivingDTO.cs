@@ -53,8 +53,7 @@
     public class ReceivingDetailRequest
     {
         public int Receiving_id { get; set; }
-        public int Position_id { get; set; }
-        public int Pallet_number { get; set; }
+        public int Pallet_id { get; set; }
         public int Quantity_in_pallet { get; set; }
         public double Total_weight { get; set; }
     }
@@ -62,12 +61,11 @@
     public class ReceivingDetailResponse
     {
         public int Id { get; set; }
-        public int Pallet_number { get; set; }
         public int Quantity_in_pallet { get; set; }
         public double Total_weight { get; set; }
         public Boolean Received { get; set; }
         public Boolean Dispatched { get; set; }
-        public PositionResponse Position { get; set; }
+        public PalletResponse Pallet { get; set; }
     }
 
     public class DocumentNumberResponse

@@ -233,7 +233,11 @@ namespace Csms_api.Controllers
                 _context.PalletPositions.Add(position);
                 await _context.SaveChangesAsync();
 
-                var response = _mapper.Map<PositionResponse>(position);
+                var savedPosition = await _context.PalletPositions
+                    .AsNoTracking()
+                    .Include(p => p.ColdStorage)
+                    .FirstOrDefaultAsync(p => p.Id == position.Id);
+                var response = _mapper.Map<PositionResponse>(savedPosition);
                 return response;
             } catch (Exception e)
             {

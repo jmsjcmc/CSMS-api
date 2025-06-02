@@ -3,6 +3,8 @@
     public class Pallet
     {
         public int Id { get; set; }
+        public int Position_id { get; set; }
+        public PalletPosition Position { get; set; }
         public string Pallet_type { get; set; }
         public int Pallet_no { get; set; }
         public Boolean Occupied { get; set; }
@@ -12,6 +14,8 @@
         public DateTime Created_on { get; set; }
         public int? Updated_id { get; set; }
         public DateTime? Updated_on { get; set; }
+        public List<DispatchDetail> DispatchDetail { get; set; } = new List<DispatchDetail>();
+        public List<ReceivingDetail> ReceivingDetail { get; set; } = new List<ReceivingDetail>();
     }
 
     public class PalletPosition
@@ -24,8 +28,7 @@
         public string Pallet_column { get; set; }
         public Boolean Hidden { get; set; }
         public Boolean Removed { get; set; }
-        public List<DispatchDetail> DispatchDetail { get; set; } = new List<DispatchDetail>();
-        public List<ReceivingDetail> ReceivingDetails { get; set; } = new List<ReceivingDetail>();
+        public Pallet Pallet { get; set; }
     }
 
     public class ColdStorage
