@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Csms_api.Helpers;
 using Csms_api.Models;
+using Csms_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,11 @@ namespace Csms_api.Controllers
     public class CompanyController : BaseApiController
     {
         private readonly ExcelHelper _excelHelper;
-        public CompanyController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper) : base(context, mapper)
+        private readonly CompanyService _companyService;
+        public CompanyController(AppDbContext context, IMapper mapper, ExcelHelper excelHelper, CompanyService companyService) : base(context, mapper)
         {
             _excelHelper = excelHelper;
+            _companyService = companyService;
         }
         // Generate companies template
         [HttpGet("companies/template")]
