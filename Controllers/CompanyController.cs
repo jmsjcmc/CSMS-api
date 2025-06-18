@@ -14,7 +14,7 @@ namespace Csms_api.Controllers
         {
             _excelHelper = excelHelper;
         }
-
+        // Generate companies template
         [HttpGet("companies/template")]
         public async Task<ActionResult> template()
         {
@@ -27,7 +27,7 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
-
+        // Export companies
         [HttpGet("companies/export")]
         public async Task<ActionResult> export()
         {
@@ -43,7 +43,7 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
-
+        // Fetch specific company
         [HttpGet("company/{id}")]
         public async Task<ActionResult<CompanyResponse>> getcompany(int id)
         {
@@ -59,7 +59,7 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
-
+        // Fetch all companies with optional filter for company name
         [HttpGet("companies")]
         public async Task<ActionResult<Paginate<CompanyResponse>>> allcompanies(
             [FromQuery] int pageNumber = 1,
@@ -100,7 +100,7 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
-
+        // Import companies
         [HttpPost("companies/import")]
         public async Task<ActionResult> importcompanies(IFormFile file)
         {
@@ -116,7 +116,7 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
-
+        // Create company
         [HttpPost("company")]
         public async Task<ActionResult<CompanyResponse>> addcompany([FromBody] CompanyRequest request)
         {
@@ -134,8 +134,8 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
-
-        [HttpPatch("company")]
+        // Hide specific company without removing in Database (soft delete)
+        [HttpPatch("company/hide/{id}")]
         public async Task<ActionResult> hidecompany(int id)
         {
             try
@@ -155,8 +155,7 @@ namespace Csms_api.Controllers
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
-
-
+        // Delete specific company in Database
         [HttpDelete("company/{id}")]
         public async Task<ActionResult> deletecompany(int id)
         {
