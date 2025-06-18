@@ -15,5 +15,13 @@ namespace Csms_api.Helpers
             _context = context;
             _mapper = mapper;
         }
+
+        protected ActionResult handleexception(Exception e)
+        {
+            return new ObjectResult(e.InnerException?.Message ?? e.Message)
+            {
+                StatusCode = 500
+            };
+        }
     }
 }

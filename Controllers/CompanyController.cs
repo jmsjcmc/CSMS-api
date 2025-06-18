@@ -52,10 +52,7 @@ namespace Csms_api.Controllers
         {
             try
             {
-                var company = await _context.Companies
-                    .FindAsync(id);
-
-                var response = _mapper.Map<CompanyResponse>(company);
+                var response = await _companyService.getcompany(id);
                 return response;
             } catch (Exception e)
             {
@@ -71,32 +68,7 @@ namespace Csms_api.Controllers
         {
             try
             {
-                var query = _context.Companies
-                    .AsNoTracking()
-                    .OrderByDescending(c => c.Id)
-                    .AsQueryable();
-
-                if (!string.IsNullOrWhiteSpace(searchTerm))
-                {
-                    query = query.Where(c => c.Company_name == searchTerm);
-                }
-
-                var totalCount = await query.CountAsync();
-
-                var companies = await query
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ProjectTo<CompanyResponse>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
-
-                var response = new Paginate<CompanyResponse>
-                {
-                    Items = companies,
-                    Total_count = totalCount,
-                    Page_number = pageNumber,
-                    Page_size = pageSize
-                };
-
+                var response = await _companyService.allcompanies(pageNumber, pageSize, searchTerm);
                 return response;
             } catch (Exception e)
             {
@@ -125,16 +97,24 @@ namespace Csms_api.Controllers
         {
             try
             {
-                var company = _mapper.Map<Company>(request);
-                company.Created_on = TimeHelper.GetPhilippineTime();
-                _context.Companies.Add(company);
-                await _context.SaveChangesAsync();
-
-                var response = _mapper.Map<CompanyResponse>(company);
+                var response = await _companyService.addcompany(request);
                 return response;
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
+            }
+        }
+        // Update specific company
+        [HttpPatch("company/update/{id}")]
+        public async Task<ActionResult<CompanyResponse>> updatecompany([FromBody] CompanyRequest request, int id)
+        {
+            try
+            {
+                var response = await _companyService.updatecompany(request, id);
+                return response;
+            } catch (Exception e)
+            {
+                return handleexception(e);
             }
         }
         // Hide specific company without removing in Database (soft delete)
@@ -143,34 +123,21 @@ namespace Csms_api.Controllers
         {
             try
             {
-                var company = await _context.Companies
-                    .FirstOrDefaultAsync(c => c.Id == id);
-
-                company.Removed = true;
-                company.Updated_on = TimeHelper.GetPhilippineTime();
-
-                _context.Companies.Update(company);
-                await _context.SaveChangesAsync();
-
-                return Ok("Company removed.");
+                await _companyService.hidecompany(id);
+                return Ok("Success");
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);
             }
         }
         // Delete specific company in Database
-        [HttpDelete("company/{id}")]
+        [HttpDelete("company/delete/{id}")]
         public async Task<ActionResult> deletecompany(int id)
         {
             try
             {
-                var company = await _context.Companies
-                    .FindAsync(id);
-
-                _context.Companies.Remove(company);
-                await _context.SaveChangesAsync();
-
-                return Ok("Company removed permanently.");
+                await _companyService.deletecompany(id);
+                return Ok("Success");
             } catch (Exception e)
             {
                 return StatusCode(500, e.InnerException?.Message ?? e.Message);

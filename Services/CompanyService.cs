@@ -19,13 +19,13 @@ namespace Csms_api.Services
             _context = context;
             _mapper = mapper;
         }
-
+        // [HttpGet("company/{id}")]
         public async Task<CompanyResponse> getcompany(int id)
         {
             var company = _companyQueries.getmethodcompany(id);
             return _mapper.Map<CompanyResponse>(company);
         }
-
+        // [HttpGet("companies")]
         public async Task<Paginate<CompanyResponse>> allcompanies(
             int pageNumber = 1,
             int pageSize = 10,
@@ -37,7 +37,7 @@ namespace Csms_api.Services
                 query, pageNumber, pageSize, _mapper);
             return PaginationHelper.paginatedresponse(companies, totalCount, pageNumber, pageSize);
         }
-
+        // [HttpPost("company")]
         public async Task<CompanyResponse> addcompany([FromBody] CompanyRequest request)
         {
             var company = _mapper.Map<Company>(request);
@@ -49,7 +49,7 @@ namespace Csms_api.Services
             var savedCompany = _companyQueries.getmethodcompany(company.Id);
             return _mapper.Map<CompanyResponse>(savedCompany);
         }
-
+        // [HttpPatch("company/update/{id}")]
         public async Task<CompanyResponse> updatecompany([FromBody] CompanyRequest request, int id)
         {
             var company = await _companyQueries.patchmethodcompany(id);
@@ -60,7 +60,7 @@ namespace Csms_api.Services
             var updatedCompany = _companyQueries.getmethodcompany(company.Id);
             return _mapper.Map<CompanyResponse>(updatedCompany);
         }
-
+        // [HttpPatch("company/hide/{id}")]
         public async Task hidecompany(int id)
         {
             var company = await _companyQueries.patchmethodcompany(id);
@@ -70,7 +70,7 @@ namespace Csms_api.Services
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
         }
-
+        // [HttpDelete("company/delete/{id}")]
         public async Task deletecompany(int id)
         {
             var company = await _companyQueries.patchmethodcompany(id);
