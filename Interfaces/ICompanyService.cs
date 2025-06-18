@@ -11,6 +11,7 @@ namespace Csms_api.Interfaces
             int pageSize = 10,
             string? searchTerm = null);
         Task<CompanyResponse> addcompany([FromBody] CompanyRequest request);
+        Task<CompanyResponse> updatecompany([FromBody] CompanyRequest request, int id);
         Task hidecompany(int id);
         Task deletecompany(int id);
     }
